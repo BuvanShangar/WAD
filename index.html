@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do List App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    form {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    input {
+      flex: 1;
+      padding: 0.5rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 1rem;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem;
+      background: #e8e8e8;
+      margin-bottom: 0.5rem;
+      border-radius: 4px;
+    }
+
+    li.completed {
+      text-decoration: line-through;
+      color: #888;
+    }
+
+    li button {
+      background: red;
+      color: white;
+      border: none;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    li button:hover {
+      background: darkred;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>To-Do List</h1>
+    <form id="todo-form">
+      <input type="text" id="todo-input" placeholder="Enter a task" required />
+      <button type="submit">Add</button>
+    </form>
+    <ul id="todo-list"></ul>
+  </div>
+
+  <script>
+    // Select elements
+    const form = document.getElementById("todo-form");
+    const input = document.getElementById("todo-input");
+    const list = document.getElementById("todo-list");
+
+    // Load tasks from localStorage
+    let todos = JSON.parse(localStorage.getItem("todos")) || [];
+
+    // Render tasks
+    function renderTodos() {
+      list.innerHTML = "";
+      todos.forEach((todo, index) => {
+        const li = document.createElement("li");
+        li.textContent = todo.text;
+
+        if (todo.completed) {
+          li.classList.add("completed");
+        }
+
+        li.addEventListener("click", () => toggleTodo(index));
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "X";
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation();
+          deleteTodo(index);
+        };
+
+        li.appendChild(deleteBtn);
+        list.appendChild(li);
+      });
+    }
+
+    // Add task
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (text !== "") {
+        todos.push({ text, completed: false });
+        saveTodos();
+        input.value = "";
+      }
+    });
+
+    // Toggle completion
+    function toggleTodo(index) {
+      todos[index].completed = !todos[index].completed;
+      saveTodos();
+    }
+
+    // Delete task
+    function deleteTodo(index) {
+      todos.splice(index, 1);
+      saveTodos();
+    }
+
+    // Save to localStorage and re-render
+    function saveTodos() {
+      localStorage.setItem("todos", JSON.stringify(todos));
+      renderTodos();
+    }
+
+    // Initial render
+    renderTodos();
+  </script>
+</body>
+</html>
