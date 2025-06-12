@@ -103,8 +103,6 @@
 
     // Load tasks from localStorage
     let todos = JSON.parse(localStorage.getItem("todos")) || [];
-
-    // Render tasks
     function renderTodos() {
       list.innerHTML = "";
       todos.forEach((todo, index) => {
